@@ -1,0 +1,25 @@
+services:
+  squid:
+    image: ubuntu/squid:latest
+    container_name: squid_proxy
+    volumes:
+      - ./proxy/squid.conf:/etc/squid/squid.conf:ro
+    ports:
+      - "3128:3128"
+    networks:
+      - ignet
+
+  instadm:
+    image: instadm:1.0
+    networks:
+      - ignet
+    depends_on:
+      - squid
+    volumes:
+      - ./:/app
+      - ./sessions:/app/sessions
+    command: python3 main.py
+
+networks:
+  ignet:
+    driver: bridge
